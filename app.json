@@ -1,29 +1,20 @@
 {
   "expo": {
-    "name": "LittleWatchApp",
-    "slug": "LittleWatchApp",
+    "name": "",
+    "slug": "littlewatch",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "platforms": ["ios", "android"],
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/Splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
+      "backgroundColor": "#86d7fc"  
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+        "foregroundImage": "./assets/Splash.png",
+        "backgroundColor": "#86d7fc"
+      }
     }
   }
 }
