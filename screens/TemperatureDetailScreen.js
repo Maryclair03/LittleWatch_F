@@ -24,15 +24,18 @@ export default function TemperatureDetailScreen({ navigation, route }) {
   ];
 
   const getStatus = () => {
-    if (value < 36.5) return { text: 'Below Normal', color: '#FF9800' };
-    if (value > 37.5) return { text: 'Above Normal', color: '#FF5252' };
-    return { text: 'Normal Range', color: '#4CAF50' };
+    if (value < 36.0) return { text: 'Hypothermia', color: '#FF5252' };
+if (value > 37.8) return { text: 'Fever', color: '#FF5252' };
+if (value >= 36.0 && value < 36.5) return { text: 'Below Normal', color: '#FF9800' };
+if (value > 37.5 && value <= 37.8) return { text: 'Elevated', color: '#FF9800' };
+return { text: 'Normal Range', color: '#4CAF50' };
+
   };
 
   const status = getStatus();
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity

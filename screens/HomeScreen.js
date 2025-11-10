@@ -5,14 +5,11 @@ import {
   StyleSheet, 
   TouchableOpacity, 
   ScrollView,
-  Switch,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen({ navigation }) {
-  // Sample data - replace with real data from Firebase
   const [babyName, setBabyName] = useState('Baby Emma');
   const [heartRate, setHeartRate] = useState(120);
   const [temperature, setTemperature] = useState(36.8);
@@ -22,9 +19,8 @@ export default function HomeScreen({ navigation }) {
   const [deviceConnected, setDeviceConnected] = useState(true);
   const [hasAlerts, setHasAlerts] = useState(true);
 
-  // Vital status indicators
   const getVitalStatus = (type, value) => {
-    switch(type) {
+    switch (type) {
       case 'heart':
         return value >= 100 && value <= 160 ? 'normal' : 'warning';
       case 'temp':
@@ -57,17 +53,10 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.menuButton}
-          onPress={() => navigation.openDrawer()}
-        >
-          <Ionicons name="menu" size={28} color="#0091EA" />
-        </TouchableOpacity>
-        
-        <View style={styles.headerCenter}>
+        <View style={styles.headerLeft}>
           <Text style={styles.babyName}>{babyName}</Text>
           <Text style={styles.headerSubtitle}>Dashboard</Text>
         </View>
@@ -156,51 +145,11 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
 
-        {/* Quick Insights */}
-        <Text style={styles.sectionTitle}>Today's Insights</Text>
-        <View style={styles.insightsCard}>
-          <View style={styles.insightRow}>
-            <View style={styles.insightItem}>
-              <Ionicons name="moon" size={22} color="#9C27B0" />
-              <View style={styles.insightContent}>
-                <Text style={styles.insightLabel}>Sleep Duration</Text>
-                <Text style={styles.insightValue}>8h 30m</Text>
-              </View>
-            </View>
-          </View>
-          
-          <View style={styles.insightRow}>
-            <View style={styles.insightItem}>
-              <Ionicons name="walk" size={22} color="#FF9800" />
-              <View style={styles.insightContent}>
-                <Text style={styles.insightLabel}>Movement Activity</Text>
-                <Text style={styles.insightValue}>Moderate</Text>
-              </View>
-            </View>
-          </View>
+       
 
-          <View style={styles.insightRow}>
-            <View style={styles.insightItem}>
-              <Ionicons name="analytics" size={22} color="#4CAF50" />
-              <View style={styles.insightContent}>
-                <Text style={styles.insightLabel}>Overall Status</Text>
-                <Text style={styles.insightValue}>Healthy</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Quick Actions */}
+        {/* Quick Actions (Removed Add Child) */}
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <View style={styles.actionsGrid}>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('AddChild')}
-          >
-            <Ionicons name="person-add" size={24} color="#0091EA" />
-            <Text style={styles.actionText}>Add Child</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity 
             style={styles.actionButton}
             onPress={() => navigation.navigate('PairDevice')}
@@ -213,7 +162,7 @@ export default function HomeScreen({ navigation }) {
             style={styles.actionButton}
             onPress={() => navigation.navigate('VitalsTimeline')}
           >
-            <Ionicons name="bar-chart" size={24} color="#0091EA" />
+            <Ionicons name="time" size={24} color="#0091EA" />
             <Text style={styles.actionText}>View History</Text>
           </TouchableOpacity>
 
@@ -224,65 +173,24 @@ export default function HomeScreen({ navigation }) {
             <Ionicons name="settings" size={24} color="#0091EA" />
             <Text style={styles.actionText}>Settings</Text>
           </TouchableOpacity>
-        </View>
 
-        {/* Recent Alerts */}
-        {hasAlerts && (
-          <>
-            <Text style={styles.sectionTitle}>Recent Alerts</Text>
-            <View style={styles.alertCard}>
-              <View style={styles.alertItem}>
-                <Ionicons name="warning" size={20} color="#FF9800" />
-                <View style={styles.alertContent}>
-                  <Text style={styles.alertTitle}>Temperature Alert</Text>
-                  <Text style={styles.alertTime}>5 minutes ago</Text>
-                </View>
-              </View>
-            </View>
-          </>
-        )}
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => navigation.navigate('SleepPatterns')}
+          >
+            <Ionicons name="moon-outline" size={24} color="#0091EA" />
+            <Text style={styles.actionText}>Sleep Patterns</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="home" size={24} color="#0091EA" />
-          <Text style={[styles.navText, styles.navTextActive]}>Home</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.navItem}
-          onPress={() => navigation.navigate('VitalsTimeline')}
-        >
-          <Ionicons name="stats-chart-outline" size={24} color="#999" />
-          <Text style={styles.navText}>Timeline</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Notifications')}
-        >
-          <Ionicons name="notifications-outline" size={24} color="#999" />
-          <Text style={styles.navText}>Alerts</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Settings')}
-        >
-          <Ionicons name="person-outline" size={24} color="#999" />
-          <Text style={styles.navText}>Profile</Text>
-        </TouchableOpacity>
-      </View>
+      
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E6F7FF',
-  },
+  container: { flex: 1, backgroundColor: '#E6F7FF' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -291,25 +199,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     backgroundColor: '#FFFFFF',
   },
-  menuButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  babyName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#333',
-  },
-  headerSubtitle: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 2,
-  },
+  headerLeft: { flex: 1 },
+  babyName: { fontSize: 18, fontWeight: '700', color: '#333' },
+  headerSubtitle: { fontSize: 12, color: '#999', marginTop: 2 },
   notificationButton: {
     width: 40,
     height: 40,
@@ -326,13 +218,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#FF5252',
   },
-  content: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 100,
-  },
+  content: { flex: 1 },
+  scrollContent: { padding: 20, paddingBottom: 100 },
   deviceCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -349,48 +236,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  deviceCardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginLeft: 8,
-    flex: 1,
-  },
-  deviceStatus: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  deviceStatusItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  deviceStatusText: {
-    fontSize: 14,
-    color: '#666',
-    marginLeft: 6,
-  },
+  deviceCardTitle: { fontSize: 16, fontWeight: '600', color: '#333', marginLeft: 8, flex: 1 },
+  deviceStatus: { flexDirection: 'row', justifyContent: 'space-around' },
+  deviceStatusItem: { flexDirection: 'row', alignItems: 'center' },
+  deviceStatusText: { fontSize: 14, color: '#666', marginLeft: 6 },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-  },
-  seeAllText: {
-    fontSize: 14,
-    color: '#0091EA',
-    fontWeight: '600',
-  },
-  vitalsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#333' },
+  seeAllText: { fontSize: 14, color: '#0091EA', fontWeight: '600' },
+  vitalsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 24 },
   vitalCard: {
     width: '48%',
     backgroundColor: '#FFFFFF',
@@ -404,10 +262,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  vitalCardWarning: {
-    borderWidth: 2,
-    borderColor: '#FF5252',
-  },
+  vitalCardWarning: { borderWidth: 2, borderColor: '#FF5252' },
   vitalIconContainer: {
     width: 56,
     height: 56,
@@ -417,24 +272,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  vitalTitle: {
-    fontSize: 12,
-    color: '#999',
-    marginBottom: 4,
-  },
-  vitalValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#333',
-  },
-  vitalValueWarning: {
-    color: '#FF5252',
-  },
-  vitalUnit: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 2,
-  },
+  vitalTitle: { fontSize: 12, color: '#999', marginBottom: 4 },
+  vitalValue: { fontSize: 24, fontWeight: '700', color: '#333' },
+  vitalValueWarning: { color: '#FF5252' },
+  vitalUnit: { fontSize: 12, color: '#999', marginTop: 2 },
   insightsCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -451,24 +292,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
-  insightItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  insightContent: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  insightLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  insightValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
+  insightItem: { flexDirection: 'row', alignItems: 'center' },
+  insightContent: { marginLeft: 12, flex: 1 },
+  insightLabel: { fontSize: 14, color: '#666', marginBottom: 4 },
+  insightValue: { fontSize: 16, fontWeight: '600', color: '#333' },
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -488,37 +315,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  actionText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 8,
-    textAlign: 'center',
-  },
+  actionText: { fontSize: 13, fontWeight: '600', color: '#333', marginTop: 8, textAlign: 'center' },
   alertCard: {
     backgroundColor: '#FFF3E0',
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
   },
-  alertItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  alertContent: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  alertTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  alertTime: {
-    fontSize: 13,
-    color: '#999',
-  },
+  alertItem: { flexDirection: 'row', alignItems: 'center' },
+  alertContent: { marginLeft: 12, flex: 1 },
+  alertTitle: { fontSize: 15, fontWeight: '600', color: '#333', marginBottom: 4 },
+  alertTime: { fontSize: 13, color: '#999' },
   bottomNav: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
@@ -531,18 +338,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navText: {
-    fontSize: 11,
-    color: '#999',
-    marginTop: 4,
-  },
-  navTextActive: {
-    color: '#0091EA',
-    fontWeight: '600',
-  },
+  navItem: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  navText: { fontSize: 11, color: '#999', marginTop: 4 },
+  navTextActive: { color: '#0091EA', fontWeight: '600' },
 });

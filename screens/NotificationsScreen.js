@@ -103,7 +103,7 @@ export default function NotificationsScreen({ navigation }) {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity

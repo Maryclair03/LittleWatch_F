@@ -22,7 +22,6 @@ export default function SignupScreen({ navigation }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleNext = () => {
-    // Basic validation
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -38,24 +37,23 @@ export default function SignupScreen({ navigation }) {
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       Alert.alert('Error', 'Please enter a valid email');
       return;
     }
 
-    // Navigate to verification screen
+    // TODO: Connect this to your backend for verification
     navigation.navigate('Verification', { email });
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -78,7 +76,7 @@ export default function SignupScreen({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                placeholder=""
+                placeholder="Enter your name"
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -90,7 +88,7 @@ export default function SignupScreen({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                placeholder=""
+                placeholder="Enter your email"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -104,7 +102,7 @@ export default function SignupScreen({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.inputWithIcon}
-                placeholder=""
+                placeholder="Enter your password"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
@@ -124,15 +122,21 @@ export default function SignupScreen({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.inputWithIcon}
-                placeholder=""
+                placeholder="Re-enter your password"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={!showConfirmPassword}
                 autoCapitalize="none"
               />
-              <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <TouchableOpacity
+                onPress={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+              >
                 <Ionicons
-                  name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={
+                    showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
+                  }
                   size={20}
                   color="#999"
                 />
@@ -148,6 +152,23 @@ export default function SignupScreen({ navigation }) {
           >
             <Text style={styles.createButtonText}>Create Account</Text>
           </TouchableOpacity>
+
+          {/* Or Sign Up with Google */}
+<View style={styles.orContainer}>
+  <View style={styles.line} />
+  <Text style={styles.orText}>or sign up with</Text>
+  <View style={styles.line} />
+</View>
+
+<TouchableOpacity
+  style={styles.googleButton}
+  activeOpacity={0.8}
+  onPress={() => Alert.alert('Google Sign-In', 'This feature will be available soon')}
+>
+  <Ionicons name="logo-google" size={20} color="#DB4437" />
+  <Text style={styles.googleText}>Continue with Google</Text>
+</TouchableOpacity>
+
 
           {/* Login Link */}
           <View style={styles.loginContainer}>
@@ -254,4 +275,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  orContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginTop: 30,
+  marginBottom: 15,
+},
+line: {
+  height: 1,
+  flex: 1,
+  backgroundColor: '#ccc',
+},
+orText: {
+  color: '#999',
+  marginHorizontal: 10,
+  fontSize: 14,
+},
+googleButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: '#ffffffff',
+  paddingVertical: 14,
+  borderRadius: 30,
+  borderWidth: 1,
+  borderColor: '#B3E5FC',
+},
+googleText: {
+  color: '#333',
+  marginLeft: 8,
+  fontWeight: '600',
+  fontSize: 15,
+},
+
 });

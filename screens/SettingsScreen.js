@@ -13,26 +13,21 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen({ navigation }) {
   const [pushNotifications, setPushNotifications] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(false);
   const [soundAlerts, setSoundAlerts] = useState(true);
   const [vibration, setVibration] = useState(true);
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => {
-            // TODO: Clear user session
-            navigation.replace('Onboarding');
-          },
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: () => {
+          // TODO: Clear user session
+          navigation.replace('Onboarding');
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleDeleteAccount = () => {
@@ -64,9 +59,7 @@ export default function SettingsScreen({ navigation }) {
           {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {showChevron && (
-        <Ionicons name="chevron-forward" size={20} color="#999" />
-      )}
+      {showChevron && <Ionicons name="chevron-forward" size={20} color="#999" />}
     </TouchableOpacity>
   );
 
@@ -91,23 +84,17 @@ export default function SettingsScreen({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#0091EA" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView 
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Profile Section */}
         <View style={styles.profileCard}>
           <View style={styles.profileAvatar}>
@@ -117,9 +104,6 @@ export default function SettingsScreen({ navigation }) {
             <Text style={styles.profileName}>Parent Name</Text>
             <Text style={styles.profileEmail}>parent@email.com</Text>
           </View>
-          <TouchableOpacity style={styles.editProfileButton}>
-            <Ionicons name="create-outline" size={20} color="#0091EA" />
-          </TouchableOpacity>
         </View>
 
         {/* Account Settings */}
@@ -129,25 +113,7 @@ export default function SettingsScreen({ navigation }) {
             icon="person-outline"
             title="Edit Profile"
             subtitle="Update your personal information"
-            onPress={() => Alert.alert('Edit Profile', 'Profile editing screen')}
-          />
-          <SettingItem
-            icon="mail-outline"
-            title="Change Email"
-            subtitle="parent@email.com"
-            onPress={() => Alert.alert('Change Email', 'Email change screen')}
-          />
-          <SettingItem
-            icon="lock-closed-outline"
-            title="Change Password"
-            subtitle="Last changed 30 days ago"
-            onPress={() => Alert.alert('Change Password', 'Password change screen')}
-          />
-          <SettingItem
-            icon="call-outline"
-            title="Phone Number"
-            subtitle="+63 917 123 4567"
-            onPress={() => Alert.alert('Phone Number', 'Phone number change screen')}
+            onPress={() => navigation.navigate('ParentAccount')}
           />
         </View>
 
@@ -160,13 +126,6 @@ export default function SettingsScreen({ navigation }) {
             subtitle="Receive alerts on your device"
             value={pushNotifications}
             onValueChange={setPushNotifications}
-          />
-          <SettingToggle
-            icon="mail-outline"
-            title="Email Notifications"
-            subtitle="Receive updates via email"
-            value={emailNotifications}
-            onValueChange={setEmailNotifications}
           />
           <SettingToggle
             icon="volume-high-outline"
@@ -184,28 +143,6 @@ export default function SettingsScreen({ navigation }) {
           />
         </View>
 
-        {/* Alert Thresholds */}
-        <Text style={styles.sectionTitle}>Alert Thresholds</Text>
-        <View style={styles.settingsGroup}>
-          <SettingItem
-            icon="heart-outline"
-            title="Heart Rate Limits"
-            subtitle="100 - 160 BPM"
-            onPress={() => Alert.alert('Heart Rate', 'Configure heart rate thresholds')}
-          />
-          <SettingItem
-            icon="thermometer-outline"
-            title="Temperature Limits"
-            subtitle="36.5°C - 37.5°C"
-            onPress={() => Alert.alert('Temperature', 'Configure temperature thresholds')}
-          />
-          <SettingItem
-            icon="water-outline"
-            title="Oxygen Limits"
-            subtitle="95% - 100%"
-            onPress={() => Alert.alert('Oxygen', 'Configure oxygen thresholds')}
-          />
-        </View>
 
         {/* Device Settings */}
         <Text style={styles.sectionTitle}>Device</Text>
@@ -216,62 +153,13 @@ export default function SettingsScreen({ navigation }) {
             subtitle="LittleWatch Band configuration"
             onPress={() => navigation.navigate('BandTracker')}
           />
-          <SettingItem
-            icon="wifi-outline"
-            title="Connectivity"
-            subtitle="Bluetooth & WiFi settings"
-            onPress={() => Alert.alert('Connectivity', 'Connection settings')}
-          />
-        </View>
-
-        {/* Baby Management */}
-        <Text style={styles.sectionTitle}>Baby Management</Text>
-        <View style={styles.settingsGroup}>
-          <SettingItem
-            icon="people-outline"
-            title="Manage Children"
-            subtitle="View and edit baby profiles"
-            onPress={() => Alert.alert('Manage Children', 'Children management screen')}
-          />
-          <SettingItem
-            icon="add-circle-outline"
-            title="Add Another Child"
-            subtitle="Monitor multiple babies"
-            onPress={() => navigation.navigate('AddChild')}
-          />
-        </View>
-
-        {/* App Settings */}
-        <Text style={styles.sectionTitle}>App</Text>
-        <View style={styles.settingsGroup}>
-          <SettingItem
-            icon="help-circle-outline"
-            title="Help & Support"
-            subtitle="FAQs and contact support"
-            onPress={() => Alert.alert('Help', 'Help and support screen')}
-          />
-          <SettingItem
-            icon="document-text-outline"
-            title="Privacy Policy"
-            onPress={() => Alert.alert('Privacy', 'Privacy policy screen')}
-          />
-          <SettingItem
-            icon="document-outline"
-            title="Terms of Service"
-            onPress={() => Alert.alert('Terms', 'Terms of service screen')}
-          />
-          <SettingItem
-            icon="information-circle-outline"
-            title="About"
-            subtitle="Version 1.0.0"
-            onPress={() => Alert.alert('About LittleWatch', 'LittleWatch v1.0.0\nDeveloped by USTP Students')}
-          />
+          
         </View>
 
         {/* Danger Zone */}
         <Text style={styles.sectionTitle}>Danger Zone</Text>
         <View style={styles.settingsGroup}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.settingItem, styles.dangerItem]}
             onPress={handleLogout}
           >
@@ -284,24 +172,12 @@ export default function SettingsScreen({ navigation }) {
             <Ionicons name="chevron-forward" size={20} color="#FF5252" />
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.settingItem, styles.dangerItem]}
-            onPress={handleDeleteAccount}
-          >
-            <View style={styles.settingLeft}>
-              <View style={[styles.settingIcon, styles.dangerIcon]}>
-                <Ionicons name="trash-outline" size={22} color="#FF5252" />
-              </View>
-              <Text style={[styles.settingTitle, styles.dangerText]}>Delete Account</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#FF5252" />
-          </TouchableOpacity>
+          
         </View>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            LittleWatch © 2025{'\n'}
-            USTP Cagayan de Oro
+            LittleWatch © 2025{'\n'}USTP Cagayan de Oro
           </Text>
         </View>
       </ScrollView>
@@ -310,10 +186,7 @@ export default function SettingsScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E6F7FF',
-  },
+  container: { flex: 1, backgroundColor: '#E6F7FF' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -322,23 +195,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     backgroundColor: '#FFFFFF',
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#0091EA',
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
+  backButton: { width: 40, height: 40, justifyContent: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '600', color: '#0091EA' },
+  placeholder: { width: 40 },
+  content: { flex: 1, padding: 20 },
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -360,33 +220,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  profileInfo: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  profileEmail: {
-    fontSize: 14,
-    color: '#999',
-  },
-  editProfileButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 12,
-    marginTop: 8,
-  },
+  profileInfo: { flex: 1, marginLeft: 16 },
+  profileName: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 4 },
+  profileEmail: { fontSize: 14, color: '#999' },
+  editProfileButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
+  sectionTitle: { fontSize: 16, fontWeight: '600', color: '#666', marginBottom: 12, marginTop: 8 },
   settingsGroup: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -406,11 +244,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
+  settingLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   settingIcon: {
     width: 40,
     height: 40,
@@ -420,36 +254,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
   },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    color: '#999',
-  },
-  dangerItem: {
-    backgroundColor: '#FFF5F5',
-  },
-  dangerIcon: {
-    backgroundColor: '#FFEBEE',
-  },
-  dangerText: {
-    color: '#FF5252',
-  },
-  footer: {
-    alignItems: 'center',
-    paddingVertical: 30,
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#999',
-    textAlign: 'center',
-    lineHeight: 18,
-  },
+  settingText: { flex: 1 },
+  settingTitle: { fontSize: 15, fontWeight: '600', color: '#333', marginBottom: 2 },
+  settingSubtitle: { fontSize: 13, color: '#999' },
+  dangerItem: { backgroundColor: '#FFF5F5' },
+  dangerIcon: { backgroundColor: '#FFEBEE' },
+  dangerText: { color: '#FF5252' },
+  footer: { alignItems: 'center', paddingVertical: 30 },
+  footerText: { fontSize: 12, color: '#999', textAlign: 'center', lineHeight: 18 },
 });

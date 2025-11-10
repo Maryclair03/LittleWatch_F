@@ -25,7 +25,7 @@ const onboardingData = [
     id: '2',
     image: require('../assets/onboarding2.jpg'),
     title: 'Monitor Your Little One',
-    description: 'Keep track of your child\'s activities, location, and wellbeing with real-time updates and notifications.',
+    description: 'Keep track of your child\'s wellbeing with real-time updates and notifications.',
   },
   {
     id: '3',
@@ -63,7 +63,7 @@ export default function OnboardingScreen({ navigation }) {
   const currentItem = onboardingData[currentIndex];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="#E6F7FF" />
 
       {/* Logo in top right */}

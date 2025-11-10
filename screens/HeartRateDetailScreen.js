@@ -28,7 +28,7 @@ export default function HeartRateDetailScreen({ navigation, route }) {
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -112,17 +112,20 @@ export default function HeartRateDetailScreen({ navigation, route }) {
         </View>
 
         {/* Reference Information */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Normal Range for Infants</Text>
-          <Text style={styles.infoText}>
-            • Newborn (0-1 month): 100-160 BPM{'\n'}
-            • Infant (1-12 months): 100-150 BPM{'\n'}
-            • Toddler (1-2 years): 90-140 BPM
-          </Text>
-          <Text style={styles.infoNote}>
-            Note: Heart rate varies based on activity, sleep, and age. Consult your pediatrician for concerns.
-          </Text>
-        </View>
+<View style={styles.infoCard}>
+  <Text style={styles.infoTitle}>Normal Range for Infants</Text>
+  <Text style={styles.infoText}>
+    • Normal Range: 90–130 BPM{'\n'}
+    • Borderline: 80–89 or 131–140 BPM{'\n'}
+    • Alert Low: Below 80 BPM (Bradycardia){'\n'}
+    • Alert High: Above 140 BPM (Tachycardia)
+  </Text>
+  <Text style={styles.infoNote}>
+    Note: Heart rate varies with activity, sleep, and emotion. Persistent
+    readings outside normal range require medical evaluation.
+  </Text>
+</View>
+
       </ScrollView>
     </SafeAreaView>
   );

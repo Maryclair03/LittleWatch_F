@@ -10,30 +10,41 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function MovementDetailScreen({ navigation, route }) {
-  const { status = 'Normal' } = route.params || {};
+  const { status = 'Resting', position = 'Back' } = route.params || {};
   
-  // Movement activity log
-  const movementLog = [
-    { time: '10:30 AM', activity: 'Active', duration: '15 min', intensity: 'Moderate' },
-    { time: '12:45 PM', activity: 'Resting', duration: '45 min', intensity: 'Low' },
-    { time: '02:20 PM', activity: 'Active', duration: '20 min', intensity: 'High' },
-    { time: '04:15 PM', activity: 'Sleep', duration: '120 min', intensity: 'None' },
+  // Activity log - replace with real Firebase data
+  const activityLog = [
+    { time: '10:30 AM', position: 'Back', activity: 'Moving' },
+    { time: '12:45 PM', position: 'Side', activity: 'Sleeping' },
+    { time: '02:20 PM', position: 'Back', activity: 'Moving' },
+    { time: '04:15 PM', position: 'Back', activity: 'Sleeping' },
   ];
 
-  const getStatusColor = () => {
-    if (status === 'High') return '#FF9800';
-    if (status === 'Low' || status === 'No Movement') return '#FF5252';
-    return '#4CAF50';
+  const getPositionIcon = (pos) => {
+    switch(pos) {
+      case 'Back': return 'person-outline';
+      case 'Stomach': return 'body-outline';
+      case 'Side': return 'fitness-outline';
+      default: return 'help-outline';
+    }
   };
 
-  const getStatusIcon = () => {
-    if (status === 'High') return 'alert-circle';
-    if (status === 'Low' || status === 'No Movement') return 'warning';
-    return 'checkmark-circle';
+  const getPositionColor = (pos) => {
+    if (pos === 'Stomach') return '#FF5252'; // Unsafe
+    return '#4CAF50'; // Safe
+  };
+
+  const getActivityColor = (activity) => {
+    switch(activity) {
+      case 'Moving': return '#FF9800';
+      case 'Sleeping': return '#9C27B0';
+      case 'Resting': return '#4CAF50';
+      default: return '#999';
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -52,92 +63,141 @@ export default function MovementDetailScreen({ navigation, route }) {
       >
         {/* Current Status Card */}
         <View style={styles.currentCard}>
-          <View style={[styles.iconContainer, { backgroundColor: getStatusColor() + '20' }]}>
-            <Ionicons name="body" size={48} color={getStatusColor()} />
+          <Text style={styles.cardLabel}>Current Status</Text>
+          
+          {/* Sleep Position */}
+          <View style={styles.statusRow}>
+            <View style={[styles.iconContainer, { backgroundColor: getPositionColor(position) + '20' }]}>
+              <Ionicons name={getPositionIcon(position)} size={40} color={getPositionColor(position)} />
+            </View>
+            <View style={styles.statusInfo}>
+              <Text style={styles.statusLabel}>Sleep Position</Text>
+              <Text style={[styles.statusValue, { color: getPositionColor(position) }]}>
+                {position}
+              </Text>
+              {position === 'Stomach' && (
+                <Text style={styles.warningText}>⚠️ Unsafe position detected</Text>
+              )}
+            </View>
           </View>
-          <Text style={[styles.currentValue, { color: getStatusColor() }]}>{status}</Text>
-          <Text style={styles.currentUnit}>Movement Status</Text>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor() + '20' }]}>
-            <Ionicons name={getStatusIcon()} size={16} color={getStatusColor()} />
-            <Text style={[styles.statusText, { color: getStatusColor(), marginLeft: 6 }]}>
-              {status === 'Normal' ? 'Healthy Activity' : 
-               status === 'High' ? 'Increased Activity' : 
-               'Reduced Activity'}
-            </Text>
+
+          <View style={styles.divider} />
+
+          {/* Activity Status */}
+          <View style={styles.statusRow}>
+            <View style={[styles.iconContainer, { backgroundColor: getActivityColor(status) + '20' }]}>
+              <Ionicons 
+                name={status === 'Moving' ? 'walk' : status === 'Sleeping' ? 'moon' : 'pause'} 
+                size={40} 
+                color={getActivityColor(status)} 
+              />
+            </View>
+            <View style={styles.statusInfo}>
+              <Text style={styles.statusLabel}>Activity Status</Text>
+              <Text style={[styles.statusValue, { color: getActivityColor(status) }]}>
+                {status}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Safe Sleep Positions Guide */}
+        <View style={styles.guideCard}>
+          <Text style={styles.cardTitle}>Safe Sleep Positions</Text>
+          
+          <View style={styles.guideItem}>
+            <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+            <View style={styles.guideContent}>
+              <Text style={styles.guideTitle}>Back - SAFE ✓</Text>
+              <Text style={styles.guideText}>
+                Recommended position for infant sleep. Reduces SIDS risk.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.guideItem}>
+            <Ionicons name="alert-circle" size={24} color="#FF9800" />
+            <View style={styles.guideContent}>
+              <Text style={styles.guideTitle}>Side - CAUTION</Text>
+              <Text style={styles.guideText}>
+                Baby may roll to stomach. Monitor closely.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.guideItem}>
+            <Ionicons name="close-circle" size={24} color="#FF5252" />
+            <View style={styles.guideContent}>
+              <Text style={styles.guideTitle}>Stomach - UNSAFE ✗</Text>
+              <Text style={styles.guideText}>
+                Highest risk for SIDS. Alert will be triggered.
+              </Text>
+            </View>
           </View>
         </View>
 
         {/* Statistics */}
         <View style={styles.statsCard}>
-          <Text style={styles.cardTitle}>Today's Activity</Text>
-          <View style={styles.statsRow}>
+          <Text style={styles.cardTitle}>Today's Summary</Text>
+          <View style={styles.statsGrid}>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Active Time</Text>
-              <Text style={styles.statValue}>35 min</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Rest Time</Text>
-              <Text style={styles.statValue}>45 min</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
+              <Ionicons name="moon" size={24} color="#9C27B0" />
+              <Text style={styles.statValue}>8.5h</Text>
               <Text style={styles.statLabel}>Sleep Time</Text>
-              <Text style={styles.statValue}>8.5 hrs</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="walk" size={24} color="#FF9800" />
+              <Text style={styles.statValue}>45min</Text>
+              <Text style={styles.statLabel}>Active Time</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="pause" size={24} color="#4CAF50" />
+              <Text style={styles.statValue}>2.5h</Text>
+              <Text style={styles.statLabel}>Resting Time</Text>
             </View>
           </View>
         </View>
 
-        {/* Movement Intensity Chart */}
-        <View style={styles.chartCard}>
-          <Text style={styles.cardTitle}>Movement Intensity</Text>
-          <View style={styles.intensityContainer}>
-            <View style={styles.intensityBar}>
-              <View style={[styles.intensityFill, { width: '35%', backgroundColor: '#4CAF50' }]} />
-            </View>
-            <Text style={styles.intensityLabel}>Low: 35%</Text>
-          </View>
-          <View style={styles.intensityContainer}>
-            <View style={styles.intensityBar}>
-              <View style={[styles.intensityFill, { width: '50%', backgroundColor: '#FF9800' }]} />
-            </View>
-            <Text style={styles.intensityLabel}>Moderate: 50%</Text>
-          </View>
-          <View style={styles.intensityContainer}>
-            <View style={styles.intensityBar}>
-              <View style={[styles.intensityFill, { width: '15%', backgroundColor: '#FF5252' }]} />
-            </View>
-            <Text style={styles.intensityLabel}>High: 15%</Text>
-          </View>
-        </View>
-
-        {/* Activity Log */}
-        <View style={styles.logCard}>
-          <Text style={styles.cardTitle}>Activity Log</Text>
-          {movementLog.map((log, index) => (
-            <View key={index} style={styles.logItem}>
-              <View style={styles.logTime}>
+        {/* Activity Timeline */}
+        <View style={styles.timelineCard}>
+          <Text style={styles.cardTitle}>Activity Timeline</Text>
+          {activityLog.map((entry, index) => (
+            <View key={index} style={styles.timelineItem}>
+              <View style={styles.timelineTime}>
                 <Ionicons name="time" size={16} color="#999" />
-                <Text style={styles.logTimeText}>{log.time}</Text>
+                <Text style={styles.timelineTimeText}>{entry.time}</Text>
               </View>
-              <View style={styles.logDetails}>
-                <Text style={styles.logActivity}>{log.activity}</Text>
-                <Text style={styles.logMeta}>{log.duration} • {log.intensity}</Text>
+              <View style={styles.timelineDetails}>
+                <View style={styles.timelineRow}>
+                  <Ionicons 
+                    name={getPositionIcon(entry.position)} 
+                    size={18} 
+                    color={getPositionColor(entry.position)} 
+                  />
+                  <Text style={[styles.timelineText, { color: getPositionColor(entry.position) }]}>
+                    {entry.position}
+                  </Text>
+                </View>
+                <View style={styles.timelineRow}>
+                  <Ionicons 
+                    name={entry.activity === 'Moving' ? 'walk' : entry.activity === 'Sleeping' ? 'moon' : 'pause'} 
+                    size={18} 
+                    color={getActivityColor(entry.activity)} 
+                  />
+                  <Text style={[styles.timelineText, { color: getActivityColor(entry.activity) }]}>
+                    {entry.activity}
+                  </Text>
+                </View>
               </View>
             </View>
           ))}
         </View>
 
-        {/* Reference Information */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Understanding Movement Patterns</Text>
-          <Text style={styles.infoText}>
-            <Text style={styles.infoBold}>Normal Movement:</Text> Regular activity with periods of rest and sleep. Baby moves freely during awake times.{'\n\n'}
-            <Text style={styles.infoBold}>High Movement:</Text> Increased activity may indicate discomfort, hunger, or overstimulation.{'\n\n'}
-            <Text style={styles.infoBold}>Low/No Movement:</Text> Extended periods without movement during sleep are normal, but prolonged stillness while awake requires attention.
-          </Text>
-          <Text style={styles.warningText}>
-            ⚠️ If baby shows no movement for extended periods while awake, or unusual movement patterns, consult your pediatrician.
+        {/* Important Note */}
+        <View style={styles.noteCard}>
+          <Ionicons name="information-circle" size={24} color="#0091EA" />
+          <Text style={styles.noteText}>
+            Always place baby on their back to sleep. Monitor changes in position and respond to alerts promptly.
           </Text>
         </View>
       </ScrollView>
@@ -178,8 +238,7 @@ const styles = StyleSheet.create({
   currentCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 32,
-    alignItems: 'center',
+    padding: 24,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -187,35 +246,49 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
+  cardLabel: {
+    fontSize: 14,
+    color: '#999',
+    marginBottom: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   iconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginRight: 16,
   },
-  currentValue: {
-    fontSize: 32,
+  statusInfo: {
+    flex: 1,
+  },
+  statusLabel: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  statusValue: {
+    fontSize: 28,
     fontWeight: '700',
   },
-  currentUnit: {
-    fontSize: 16,
-    color: '#999',
-    marginBottom: 16,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  statusText: {
-    fontSize: 14,
+  warningText: {
+    fontSize: 13,
+    color: '#FF5252',
+    marginTop: 4,
     fontWeight: '600',
   },
-  statsCard: {
+  divider: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
+    marginVertical: 20,
+  },
+  guideCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
@@ -232,28 +305,56 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 16,
   },
-  statsRow: {
+  guideItem: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  guideContent: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  guideTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  guideText: {
+    fontSize: 13,
+    color: '#666',
+    lineHeight: 18,
+  },
+  statsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  statsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
   statItem: {
     alignItems: 'center',
   },
-  statLabel: {
-    fontSize: 13,
-    color: '#999',
-    marginBottom: 8,
-  },
   statValue: {
     fontSize: 18,
     fontWeight: '700',
     color: '#333',
+    marginTop: 8,
   },
-  statDivider: {
-    width: 1,
-    backgroundColor: '#F0F0F0',
+  statLabel: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+    textAlign: 'center',
   },
-  chartCard: {
+  timelineCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
@@ -264,94 +365,47 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  intensityContainer: {
-    marginBottom: 16,
-  },
-  intensityBar: {
-    width: '100%',
-    height: 12,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 6,
-    overflow: 'hidden',
-    marginBottom: 6,
-  },
-  intensityFill: {
-    height: '100%',
-    borderRadius: 6,
-  },
-  intensityLabel: {
-    fontSize: 13,
-    color: '#666',
-  },
-  logCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  logItem: {
+  timelineItem: {
     flexDirection: 'row',
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
-  logTime: {
+  timelineTime: {
     flexDirection: 'row',
     alignItems: 'center',
     width: 100,
   },
-  logTimeText: {
+  timelineTimeText: {
     fontSize: 13,
     color: '#999',
     marginLeft: 6,
   },
-  logDetails: {
+  timelineDetails: {
     flex: 1,
   },
-  logActivity: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#333',
+  timelineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
   },
-  logMeta: {
-    fontSize: 13,
-    color: '#999',
+  timelineText: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 8,
   },
-  infoCard: {
-    backgroundColor: '#F3E5F5',
-    borderRadius: 20,
-    padding: 20,
+  noteCard: {
+    flexDirection: 'row',
+    backgroundColor: '#E3F2FD',
+    borderRadius: 16,
+    padding: 16,
     marginBottom: 20,
   },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#9C27B0',
-    marginBottom: 12,
-  },
-  infoText: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  infoBold: {
-    fontWeight: '600',
-    color: '#333',
-  },
-  warningText: {
+  noteText: {
+    flex: 1,
     fontSize: 13,
-    color: '#FF5252',
-    fontWeight: '600',
+    color: '#0091EA',
+    marginLeft: 12,
     lineHeight: 20,
-    backgroundColor: '#FFEBEE',
-    padding: 12,
-    borderRadius: 8,
   },
 });

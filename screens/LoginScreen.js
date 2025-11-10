@@ -19,31 +19,28 @@ export default function LoginScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // Basic validation
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       Alert.alert('Error', 'Please enter a valid email');
       return;
     }
 
-    // TODO: Add your authentication logic here
-    // For now, just navigate to Home
+    // TODO: Replace this with backend authentication
     navigation.replace('Home');
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -123,15 +120,10 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.dividerLine} />
           </View>
 
-          {/* Social Login Buttons */}
+          {/* ✅ Google Login Only */}
           <TouchableOpacity style={styles.socialButton}>
             <Ionicons name="logo-google" size={20} color="#DB4437" />
             <Text style={styles.socialButtonText}>Continue with Google</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.socialButton}>
-            <Ionicons name="logo-apple" size={20} color="#000" />
-            <Text style={styles.socialButtonText}>Continue with Apple</Text>
           </TouchableOpacity>
 
           {/* Sign Up Link */}

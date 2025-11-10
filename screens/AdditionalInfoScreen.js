@@ -43,7 +43,7 @@ export default function AdditionalInfoScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -120,7 +120,7 @@ export default function AdditionalInfoScreen({ navigation }) {
                 <View style={styles.inputContainer}>
                   <TextInput
                     style={styles.input}
-                    placeholder="M/D/Y"
+                    placeholder="M - D - Y"
                     value={dateOfBirth}
                     onChangeText={setDateOfBirth}
                     keyboardType="numeric"

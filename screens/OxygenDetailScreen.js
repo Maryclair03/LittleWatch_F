@@ -24,15 +24,18 @@ export default function OxygenDetailScreen({ navigation, route }) {
   ];
 
   const getStatus = () => {
-    if (value < 95) return { text: 'Below Normal', color: '#FF5252' };
-    if (value >= 95 && value < 97) return { text: 'Acceptable', color: '#FF9800' };
-    return { text: 'Normal Range', color: '#4CAF50' };
-  };
+  if (value < 94) return { text: 'Below Normal - Alert', color: '#FF5252' };
+  if (value >= 94 && value < 95) return { text: 'Borderline', color: '#FF9800' };
+  if (value >= 95 && value <= 100) return { text: 'Normal Range', color: '#4CAF50' };
+  if (value > 100) return { text: 'Above Normal (If not on O₂)', color: '#FF9800' };
+  return { text: 'Normal', color: '#4CAF50' };
+};
+
 
   const status = getStatus();
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -92,21 +95,24 @@ export default function OxygenDetailScreen({ navigation, route }) {
         </View>
 
         {/* Reference Information */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Normal Oxygen Saturation</Text>
-          <Text style={styles.infoText}>
-            • Normal: 95% - 100%{'\n'}
-            • Acceptable: 90% - 94%{'\n'}
-            • Low (Hypoxemia): Below 90%{'\n'}
-            • Critical: Below 85%
-          </Text>
-          <Text style={styles.warningText}>
-            ⚠️ If oxygen saturation drops below 95% consistently or below 90% at any time, seek immediate medical attention.
-          </Text>
-          <Text style={styles.infoNote}>
-            Note: Brief dips during movement or sleep position changes are normal. Persistent low readings require medical evaluation.
-          </Text>
-        </View>
+<View style={styles.infoCard}>
+  <Text style={styles.infoTitle}>Normal Oxygen Saturation</Text>
+  <Text style={styles.infoText}>
+    • Normal Range: 95%–100%{'\n'}
+    • Borderline: 94%{'\n'}
+    • Alert Low: Below 94% (Hypoxemia){'\n'}
+    • Alert High: Above 100% (if not on oxygen support)
+  </Text>
+  <Text style={styles.warningText}>
+    ⚠️ If oxygen saturation drops below 95% consistently or below 90% at any time,
+    seek immediate medical attention.
+  </Text>
+  <Text style={styles.infoNote}>
+    Note: Brief dips during movement or sleep position changes are normal. Persistent
+    low readings require medical evaluation.
+  </Text>
+</View>
+
       </ScrollView>
     </SafeAreaView>
   );

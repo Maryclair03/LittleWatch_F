@@ -11,28 +11,18 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function VitalsTimelineScreen({ navigation }) {
   const [selectedPeriod, setSelectedPeriod] = useState('24H');
-  const [selectedVital, setSelectedVital] = useState('all');
 
   // Sample timeline data - replace with real Firebase data
   const timelineData = [
     {
-      time: '2:30 PM',
+      time: '7:00 AM',
       date: 'Today',
       vitals: {
-        heartRate: 120,
-        temperature: 36.8,
-        oxygen: 98,
-        movement: 'Active'
-      }
-    },
-    {
-      time: '12:00 PM',
-      date: 'Today',
-      vitals: {
-        heartRate: 115,
-        temperature: 36.7,
+        sleepDuration: '7.2 hrs',
+        heartRate: 108,
+        temperature: 36.5,
         oxygen: 97,
-        movement: 'Resting'
+        movement: 'Sleep'
       }
     },
     {
@@ -42,17 +32,27 @@ export default function VitalsTimelineScreen({ navigation }) {
         heartRate: 110,
         temperature: 36.6,
         oxygen: 98,
-        movement: 'Sleep'
+        movement: 'Resting'
       }
     },
     {
-      time: '6:00 AM',
+      time: '12:00 PM',
       date: 'Today',
       vitals: {
-        heartRate: 108,
-        temperature: 36.5,
+        heartRate: 115,
+        temperature: 36.7,
         oxygen: 97,
-        movement: 'Sleep'
+        movement: 'Active'
+      }
+    },
+    {
+      time: '2:30 PM',
+      date: 'Today',
+      vitals: {
+        heartRate: 120,
+        temperature: 36.8,
+        oxygen: 98,
+        movement: 'Active'
       }
     },
   ];
@@ -68,7 +68,7 @@ export default function VitalsTimelineScreen({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -113,6 +113,11 @@ export default function VitalsTimelineScreen({ navigation }) {
           <Text style={styles.summaryTitle}>Summary ({selectedPeriod})</Text>
           <View style={styles.summaryGrid}>
             <View style={styles.summaryItem}>
+              <Ionicons name="moon-outline" size={20} color="#3F51B5" />
+              <Text style={styles.summaryLabel}>Avg Sleep</Text>
+              <Text style={styles.summaryValue}>7.1 hrs</Text>
+            </View>
+            <View style={styles.summaryItem}>
               <Ionicons name="heart" size={20} color="#0091EA" />
               <Text style={styles.summaryLabel}>Avg Heart Rate</Text>
               <Text style={styles.summaryValue}>113 BPM</Text>
@@ -127,24 +132,10 @@ export default function VitalsTimelineScreen({ navigation }) {
               <Text style={styles.summaryLabel}>Avg Oxygen</Text>
               <Text style={styles.summaryValue}>97.5%</Text>
             </View>
-            <View style={styles.summaryItem}>
-              <Ionicons name="body" size={20} color="#9C27B0" />
-              <Text style={styles.summaryLabel}>Activity</Text>
-              <Text style={styles.summaryValue}>Normal</Text>
-            </View>
           </View>
         </View>
 
-        {/* Graph Placeholder */}
-        <View style={styles.graphCard}>
-          <Text style={styles.graphTitle}>Vitals Graph</Text>
-          <View style={styles.graphPlaceholder}>
-            <Ionicons name="trending-up" size={48} color="#B3E5FC" />
-            <Text style={styles.graphPlaceholderText}>
-              Interactive graph visualization
-            </Text>
-          </View>
-        </View>
+        
 
         {/* Timeline */}
         <View style={styles.timelineSection}>
@@ -159,6 +150,15 @@ export default function VitalsTimelineScreen({ navigation }) {
                 <Text style={styles.timelineDate}>{entry.date}</Text>
               </View>
               <View style={styles.timelineVitals}>
+                {entry.vitals.sleepDuration && (
+                  <VitalItem 
+                    icon="moon-outline" 
+                    label="Sleep" 
+                    value={entry.vitals.sleepDuration} 
+                    unit=""
+                    color="#3F51B5"
+                  />
+                )}
                 <VitalItem 
                   icon="heart" 
                   label="HR" 
@@ -191,12 +191,6 @@ export default function VitalsTimelineScreen({ navigation }) {
             </View>
           ))}
         </View>
-
-        {/* Export Button */}
-        <TouchableOpacity style={styles.exportButton}>
-          <Ionicons name="download" size={20} color="#0091EA" />
-          <Text style={styles.exportButtonText}>Export Data</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -389,22 +383,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     marginLeft: 4,
-  },
-  exportButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#0091EA',
-    borderRadius: 30,
-    paddingVertical: 16,
-    marginBottom: 20,
-  },
-  exportButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0091EA',
-    marginLeft: 8,
   },
 });

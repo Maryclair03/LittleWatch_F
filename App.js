@@ -18,11 +18,14 @@ import TemperatureDetailScreen from './screens/TemperatureDetailScreen';
 import OxygenDetailScreen from './screens/OxygenDetailScreen';
 import MovementDetailScreen from './screens/MovementDetailScreen';
 import BandTrackerScreen from './screens/BandTrackerScreen';
-import AddChildScreen from './screens/AddChildScreen';
 import PairDeviceScreen from './screens/PairDeviceScreen';
 import VitalsTimelineScreen from './screens/VitalsTimelineScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import SleepPatternsScreen from './screens/SleepPatternsScreen';
+import ParentAccountScreen from './screens/ParentAccountScreen';
+import ChangePasswordScreen from './screens/ChangePasswordScreen';
+
 
 // Prevent auto-hiding right away
 SplashScreen.preventAutoHideAsync();
@@ -81,13 +84,22 @@ export default function App() {
         <Stack.Screen name="TemperatureDetail" component={TemperatureDetailScreen} />
         <Stack.Screen name="OxygenDetail" component={OxygenDetailScreen} />
         <Stack.Screen name="MovementDetail" component={MovementDetailScreen} />
+
+        {/* Sleep Pattern */}
+        <Stack.Screen name="SleepPatterns" component={SleepPatternsScreen} options={{ title: 'Sleep Patterns' }} />
+        
+        <Stack.Screen name="ParentAccount" component={ParentAccountScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+
+
+
+
         
         {/* Device Management */}
         <Stack.Screen name="BandTracker" component={BandTrackerScreen} />
         <Stack.Screen name="PairDevice" component={PairDeviceScreen} />
         
-        {/* Child Management */}
-        <Stack.Screen name="AddChild" component={AddChildScreen} />
+        
         
         {/* TODO: Create these screens */}
         <Stack.Screen name="VitalsTimeline" component={VitalsTimelineScreen} /> 
