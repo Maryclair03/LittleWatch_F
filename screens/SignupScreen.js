@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,49 +9,70 @@ import {
   Platform,
   ScrollView,
   Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import http from "../src/services/api"; // make sure the path is correct
 
 export default function SignupScreen({ navigation }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
-
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert("Error", "Password must be at least 6 characters");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email');
+      Alert.alert("Error", "Please enter a valid email");
       return;
     }
 
-    // TODO: Connect this to your backend for verification
-    navigation.navigate('Verification', { email });
+    try {
+      const response = await http.post("/admin-register", {
+        name,
+        email,
+        password,
+      });
+
+      if (response.data.token) {
+        await AsyncStorage.setItem("token", response.data.token);
+        Alert.alert("Success", "Account created successfully!");
+        navigation.replace("Verification", { email });
+      } else {
+        Alert.alert("Signup Failed", response.data.message || "Try again");
+      }
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      Alert.alert(
+        "Signup Error",
+        error.response?.data?.error || "Unable to sign up. Please try again."
+      );
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -110,7 +131,7 @@ export default function SignupScreen({ navigation }) {
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
                   color="#999"
                 />
@@ -129,14 +150,10 @@ export default function SignupScreen({ navigation }) {
                 autoCapitalize="none"
               />
               <TouchableOpacity
-                onPress={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 <Ionicons
-                  name={
-                    showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
-                  }
+                  name={showConfirmPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
                   color="#999"
                 />
@@ -154,26 +171,30 @@ export default function SignupScreen({ navigation }) {
           </TouchableOpacity>
 
           {/* Or Sign Up with Google */}
-<View style={styles.orContainer}>
-  <View style={styles.line} />
-  <Text style={styles.orText}>or sign up with</Text>
-  <View style={styles.line} />
-</View>
+          <View style={styles.orContainer}>
+            <View style={styles.line} />
+            <Text style={styles.orText}>or sign up with</Text>
+            <View style={styles.line} />
+          </View>
 
-<TouchableOpacity
-  style={styles.googleButton}
-  activeOpacity={0.8}
-  onPress={() => Alert.alert('Google Sign-In', 'This feature will be available soon')}
->
-  <Ionicons name="logo-google" size={20} color="#DB4437" />
-  <Text style={styles.googleText}>Continue with Google</Text>
-</TouchableOpacity>
-
+          <TouchableOpacity
+            style={styles.googleButton}
+            activeOpacity={0.8}
+            onPress={() =>
+              Alert.alert(
+                "Google Sign-In",
+                "This feature will be available soon"
+              )
+            }
+          >
+            <Ionicons name="logo-google" size={20} color="#DB4437" />
+            <Text style={styles.googleText}>Continue with Google</Text>
+          </TouchableOpacity>
 
           {/* Login Link */}
           <View style={styles.loginContainer}>
             <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={styles.loginLink}>Login</Text>
             </TouchableOpacity>
           </View>
@@ -186,7 +207,7 @@ export default function SignupScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6F7FF',
+    backgroundColor: "#E6F7FF",
   },
   keyboardView: {
     flex: 1,
@@ -196,20 +217,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 16,
   },
   backButton: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#0091EA',
+    fontWeight: "600",
+    color: "#0091EA",
   },
   placeholder: {
     width: 40,
@@ -219,14 +240,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#000',
+    color: "#000",
     marginBottom: 8,
     marginLeft: 4,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -235,78 +256,77 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#333',
+    color: "#333",
   },
   inputWithIcon: {
     flex: 1,
     fontSize: 15,
-    color: '#333',
+    color: "#333",
     marginRight: 10,
   },
   createButton: {
-    backgroundColor: '#0091EA',
+    backgroundColor: "#0091EA",
     borderRadius: 30,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 40,
-    shadowColor: '#0091EA',
+    shadowColor: "#0091EA",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
   },
   createButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
   },
   loginText: {
-    color: '#999',
+    color: "#999",
     fontSize: 14,
   },
   loginLink: {
-    color: '#0091EA',
+    color: "#0091EA",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   orContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginTop: 30,
-  marginBottom: 15,
-},
-line: {
-  height: 1,
-  flex: 1,
-  backgroundColor: '#ccc',
-},
-orText: {
-  color: '#999',
-  marginHorizontal: 10,
-  fontSize: 14,
-},
-googleButton: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: '#ffffffff',
-  paddingVertical: 14,
-  borderRadius: 30,
-  borderWidth: 1,
-  borderColor: '#B3E5FC',
-},
-googleText: {
-  color: '#333',
-  marginLeft: 8,
-  fontWeight: '600',
-  fontSize: 15,
-},
-
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 30,
+    marginBottom: 15,
+  },
+  line: {
+    height: 1,
+    flex: 1,
+    backgroundColor: "#ccc",
+  },
+  orText: {
+    color: "#999",
+    marginHorizontal: 10,
+    fontSize: 14,
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffffff",
+    paddingVertical: 14,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#B3E5FC",
+  },
+  googleText: {
+    color: "#333",
+    marginLeft: 8,
+    fontWeight: "600",
+    fontSize: 15,
+  },
 });

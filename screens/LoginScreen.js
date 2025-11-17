@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,36 +9,61 @@ import {
   Platform,
   ScrollView,
   Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
+import http from "../src/services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { setIsAuthenticated, checkAuth } = useAuth(); // ⬅ add this
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email');
+      Alert.alert("Error", "Please enter a valid email");
       return;
     }
 
-    // TODO: Replace this with backend authentication
-    navigation.replace('Home');
+    try {
+      const response = await http.post("/admin-login", { email, password });
+
+      if (response.data.accessToken) {
+        await AsyncStorage.setItem("token", response.data.accessToken);
+        setIsAuthenticated(true);
+        checkAuth();
+        navigation.replace("Home");
+      } else {
+        Alert.alert(
+          "Login Failed",
+          response.data.message || "Invalid credentials"
+        );
+      }
+    } catch (error) {
+      console.log("Login Error Object:", error);
+      console.log("Response Data:", error.response?.data);
+      Alert.alert(
+        "Login Error",
+        error.response?.data?.error || "Unable to login. Please try again."
+      );
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -91,7 +116,7 @@ export default function LoginScreen({ navigation }) {
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
                   color="#999"
                 />
@@ -129,7 +154,7 @@ export default function LoginScreen({ navigation }) {
           {/* Sign Up Link */}
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
               <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -142,7 +167,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6F7FF',
+    backgroundColor: "#E6F7FF",
   },
   keyboardView: {
     flex: 1,
@@ -152,20 +177,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 16,
   },
   backButton: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#0091EA',
+    fontWeight: "600",
+    color: "#0091EA",
   },
   placeholder: {
     width: 40,
@@ -176,27 +201,27 @@ const styles = StyleSheet.create({
   },
   welcomeTitle: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#0091EA',
+    fontWeight: "700",
+    color: "#0091EA",
     marginBottom: 8,
   },
   welcomeSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   form: {
     marginBottom: 20,
   },
   label: {
     fontSize: 14,
-    color: '#000',
+    color: "#000",
     marginBottom: 8,
     marginLeft: 4,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -205,85 +230,85 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#333',
+    color: "#333",
   },
   inputWithIcon: {
     flex: 1,
     fontSize: 15,
-    color: '#333',
+    color: "#333",
     marginRight: 10,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginTop: -10,
   },
   forgotPasswordText: {
-    color: '#0091EA',
+    color: "#0091EA",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   loginButton: {
-    backgroundColor: '#0091EA',
+    backgroundColor: "#0091EA",
     borderRadius: 30,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
-    shadowColor: '#0091EA',
+    shadowColor: "#0091EA",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
   },
   loginButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 24,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#B3E5FC',
+    backgroundColor: "#B3E5FC",
   },
   dividerText: {
     marginHorizontal: 12,
-    color: '#999',
+    color: "#999",
     fontSize: 14,
   },
   socialButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 30,
     paddingVertical: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#B3E5FC',
+    borderColor: "#B3E5FC",
   },
   socialButtonText: {
     marginLeft: 10,
     fontSize: 15,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
   },
   signupText: {
-    color: '#999',
+    color: "#999",
     fontSize: 14,
   },
   signupLink: {
-    color: '#0091EA',
+    color: "#0091EA",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
